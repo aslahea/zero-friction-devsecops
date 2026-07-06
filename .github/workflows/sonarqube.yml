@@ -2,13 +2,6 @@ name: Reusable SonarCloud Scan
 
 on:
   workflow_call:
-    inputs:
-      project-key:
-        type: string
-        required: true
-      organization:
-        type: string
-        required: true
 
 jobs:
   sonar:
@@ -20,11 +13,13 @@ jobs:
           fetch-depth: 0 # Shallow clones must be disabled for accurate Sonar analysis
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v3
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        # Secure check: Step is skipped gracefully if the token secret is missing in the executing repo
+        if: ${{ env.SONAR_TOKEN != '' }}
+        uses: SonarSource/sonarqube-scan-action@v3
         with:
           args: >
-            -Dsonar.projectKey=${{ inputs.project-key }}
-            -Dsonar.organization=${{ inputs.organization }}
+            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}
+            -Dsonar.organization=${{ github.repository_owner }}
