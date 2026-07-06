@@ -20,4 +20,5 @@ jobs:
           target: ${{ inputs.target-url }}
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_action: false
-          artifact_name: 'zap-report' # Saves report inside an artifact named 'zap-report'
+          allow_issue_writing: false # Prevents the 403 error on issue creation
+          artifact_name: 'zap-report'
