@@ -1,4 +1,4 @@
-name: Reusable CodeQL
+name: Reusable CodeQL SAST
 
 on:
   workflow_call:
