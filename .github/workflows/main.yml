@@ -28,8 +28,12 @@ on:
         default: 'aslahea068@gmail.com'
 
 jobs:
-  # 1. CodeQL SAST Scan
+  # 1. CodeQL SAST Scan (Added permissions block here)
   sast-codeql:
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
     uses: aslahea/zero-friction-devsecops/.github/workflows/codeql.yml@main
     with:
       language: ${{ github.event.inputs.language || inputs.language }}
@@ -47,7 +51,7 @@ jobs:
   # 4. Aggregator & Notifier
   notify:
     needs: [sast-codeql, sca-trivy, dast-zap]
-    if: always() # Run even if a scanner identifies code failures
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - name: Create Reports Directory
