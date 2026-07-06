@@ -11,7 +11,7 @@ on:
       email-recipient:
         description: 'Send test email to:'
         required: true
-        default: 'your-email@domain.com' # Put your actual email here for the test
+        default: 'aslahea068@gmail.com' # Put your actual email here for the test
 
 jobs:
   # Run our Trivy scanner
