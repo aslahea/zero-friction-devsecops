@@ -1,0 +1,30 @@
+name: Reusable SonarCloud Scan
+
+on:
+  workflow_call:
+    inputs:
+      project-key:
+        type: string
+        required: true
+      organization:
+        type: string
+        required: true
+
+jobs:
+  sonar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Shallow clones must be disabled for accurate Sonar analysis
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=${{ inputs.project-key }}
+            -Dsonar.organization=${{ inputs.organization }}
