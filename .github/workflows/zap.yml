@@ -1,0 +1,23 @@
+name: Reusable OWASP ZAP DAST
+
+on:
+  workflow_call:
+    inputs:
+      target-url:
+        type: string
+        default: 'https://example.com'
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: OWASP ZAP Baseline Scan
+        uses: zaproxy/action-baseline@v0.15.0
+        with:
+          target: ${{ inputs.target-url }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_action: false
+          artifact_name: 'zap-report' # Saves report inside an artifact named 'zap-report'
