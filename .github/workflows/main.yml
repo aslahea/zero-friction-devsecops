@@ -1,0 +1,57 @@
+name: DevSecOps Master Orchestrator
+
+on:
+  workflow_call:
+    inputs:
+      email-recipient:
+        type: string
+        required: true
+  workflow_dispatch: # Allows us to run a test manually right now
+    inputs:
+      email-recipient:
+        description: 'Send test email to:'
+        required: true
+        default: 'your-email@domain.com' # Put your actual email here for the test
+
+jobs:
+  # Run our Trivy scanner
+  sca-trivy:
+    uses: aslahea/zero-friction-devsecops/.github/workflows/trivy-fs.yml@main
+
+  # Collect reports and email them
+  notify:
+    needs: [sca-trivy]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Reports Directory
+        run: mkdir -p reports
+
+      - name: Download Trivy Report
+        uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: trivy-report
+          path: reports/
+
+      - name: Send Email Report
+        uses: dawidd6/action-send-mail@v4
+        with:
+          server_address: ${{ secrets.MAIL_SERVER }}
+          server_port: ${{ secrets.MAIL_PORT }}
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: "[DevSecOps Alert] Security Scan Completed for ${{ github.repository }}"
+          to: ${{ github.event.inputs.email-recipient || inputs.email-recipient }}
+          from: "DevSecOps Engine <${{ secrets.MAIL_USERNAME }}>"
+          body: |
+            Hello Team,
+
+            The security scanning pipeline has executed successfully for repository: ${{ github.repository }}.
+
+            Scanners Executed:
+            1. SCA (Trivy): Completed. (Report is attached as trivy-report.txt).
+
+            Regards,
+            DevSecOps Automation Engine
+          attachments: reports/trivy-report.txt
