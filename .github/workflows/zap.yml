@@ -22,11 +22,15 @@ jobs:
           fail_action: false
           allow_issue_writing: false
 
-      # === VITAL STEP ===
-      # This step MUST be present in your zap.yml, otherwise only Trivy will arrive in your email.
+      # 1. Rename the file on the runner workspace to prevent errors
+      - name: Rename ZAP Report File
+        if: always()
+        run: mv report_html.html zap-report.html
+
+      # 2. Upload the renamed file safely using v4 APIs
       - name: Upload ZAP Report Artifact (v4 compatibility)
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: zap-report
-          path: report_html.html
+          path: zap-report.html
