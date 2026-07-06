@@ -1,0 +1,15 @@
+name: Central Security Scan Trigger
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  trigger-security:
+    uses: aslahea/zero-friction-devsecops/.github/workflows/main.yml@main
+    secrets: inherit # Automatically passes SMTP and Sonar secrets downwards
+    with:
+      language: 'javascript'
+      target-url: 'https://www.example.com' # Replace with staging URL when live
+      email-recipient: 'your-email@domain.com'
