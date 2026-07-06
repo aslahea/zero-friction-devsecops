@@ -10,16 +10,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Shallow clones must be disabled for accurate Sonar analysis
+          fetch-depth: 0
 
       - name: SonarCloud Scan
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        # Secure check: Step is skipped gracefully if the token secret is missing in the executing repo
         if: ${{ env.SONAR_TOKEN != '' }}
         uses: SonarSource/sonarqube-scan-action@v3
         with:
           args: >
-            -Dsonar.projectKey=${{ github.repository_owner }}_${{ github.event.repository.name }}
-            -Dsonar.organization=${{ github.repository_owner }}
+            -Dsonar.projectKey=${{ secrets.SONAR_ORGANIZATION || github.repository_owner }}_${{ github.event.repository.name }}
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION || github.repository_owner }}
