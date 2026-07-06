@@ -22,7 +22,8 @@ jobs:
           fail_action: false
           allow_issue_writing: false
 
-      # Manually upload the generated HTML report using modern v4 API
+      # === VITAL STEP ===
+      # This step MUST be present in your zap.yml, otherwise only Trivy will arrive in your email.
       - name: Upload ZAP Report Artifact (v4 compatibility)
         if: always()
         uses: actions/upload-artifact@v4
