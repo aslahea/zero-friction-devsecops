@@ -1,0 +1,23 @@
+name: Reusable TFLint Scan
+
+on:
+  workflow_call:
+
+jobs:
+  tflint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup TFLint
+        uses: terraform-linters/setup-tflint@v4
+        with:
+          tflint_version: latest
+
+      - name: Initialize and Run TFLint
+        # tflint --init downloads provider-specific rules
+        run: |
+          tflint --init
+          tflint -f compact
+        continue-on-error: true # Bypasses failures gracefully
