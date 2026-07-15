@@ -1,0 +1,21 @@
+name: Reusable GitLeaks Scan
+
+on:
+  workflow_call:
+
+jobs:
+  gitleaks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches full history so GitLeaks can scan past commits
+
+      - name: Run GitLeaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # Bypasses hard fail for the demo so pre-existing leaks don't block you
+          fail_on_leak: false
