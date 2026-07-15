@@ -1,0 +1,19 @@
+name: Reusable Checkov Scan
+
+on:
+  workflow_call:
+
+jobs:
+  checkov:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Checkov Security Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          # Scans both IaC and Kubernetes manifests
+          framework: terraform,kubernetes,cloudformation
+          output_format: cli
+          soft_fail: true # Non-blocking default to protect developer velocity
